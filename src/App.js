@@ -33,20 +33,20 @@ const App = () => {
     let long = issData.iss_position.longitude
 
 
-    if(Number(lat) < coordinateB.latitude) return 'false' 
-    else if (Number(lat) > Number(coordinateA.latitude)) return 'false'
-    else if (Number(long) < Number(coordinateA.longitude)) return 'false'
-    else if (Number(long) > Number(coordinateB.longitude)) return 'false'
+    if(Number(lat) < coordinateB.latitude) return 'No' 
+    else if (Number(lat) > Number(coordinateA.latitude)) return 'No'
+    else if (Number(long) < Number(coordinateA.longitude)) return 'No'
+    else if (Number(long) > Number(coordinateB.longitude)) return 'No'
     else {
       console.log('sending...')
       sendNotification()
-      return 'true'
+      return 'Yes'
     }
   }
 
   const sendNotification = async () => {
     const templateId = 'template_vK0F4z4Q'
-    const serviceId = 'securebox20_gmail_com'
+    const serviceId = 'iss_tracker'
     const params = {
       from_name: 'issTracker',
       to_name: 'Daniel'
@@ -66,10 +66,8 @@ const App = () => {
   }
 
   const getISSData = async () => {
-      setInterval(async () => {setIssData(await issService.getLocation())}, 1000*60*5);
-      console.log('get iss data')
-      //setIssData(await issService.getLocation())
-    
+      setInterval(() => { window.location.reload() }, 1000*60)
+      
   }
 
   const updateISSData = async () => {
@@ -81,7 +79,7 @@ const App = () => {
   const getGeoData = async () => {
     console.log('get location data')
     setGeoData(await geolocationService.getLocation(issData.iss_position.longitude, issData.iss_position.latitude))
-    getISSData()
+    //getISSData()
   }
 
   const handleGeoLocation = () => {
