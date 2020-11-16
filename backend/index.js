@@ -3,18 +3,22 @@ const express = require('express')
 const Telegraf = require('telegraf')
 const database = require('./utils/database')
 const app = express()
-const bot = new Telegraf('1430749195:AAFPvIqlQ_nX7n3lhvmX-D3POSziQyA5DJM') 
+require('dotenv').config()
 
+const bot = new Telegraf(process.env.TOKEN) 
 
 database.checkDatabase()
 
 bot.hears('hi', (ctx) => ctx.reply('Hey there')) 
 bot.hears('hello', ctx => ctx.reply(`Hey ${ctx.from.username}!`))
 
+bot.command('start', async(ctx) => {
+    ctx.reply(`Hey ${ctx.from.username}, I am Steven. Nice to meet you.`)
+})
 
 bot.command('register', async(ctx) => {
     await database.insertRow('registered', '(null, ?, ?)', [ctx.chat.id, ctx.from.id])
-    ctx.reply('Hey, you are now registered to my ISS tracking service. Kind regards Steven. ')
+    ctx.reply('Hey, you are now registered to my ISS tracking service. Kind regards, Steven. ')
 })
 
 bot.command('deregister', async(ctx) => {
@@ -36,8 +40,7 @@ app.get('/api/iss/notification', async (request, response) => {
 
     const ruser = await database.selectAllRows('rowid, chatId, userId', 'registered')
     ruser.map(user => {
-        bot.telegram.sendMessage(user.userId, `Hey mate, amazing news. The ISS is in your area. Check out this link: https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/International_Space_Station/Where_is_the_International_Space_Station `)
-        bot.telegram.sendMessage(user.userId, 'Cheers, Steven!')
+        bot.telegram.sendMessage(user.userId, `Hey mate, amazing news. The ISS is in your area. Check out this link: https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/International_Space_Station/Where_is_the_International_Space_Station ! Cheers, Steven! `)
     })
     response.status(200)
 })
