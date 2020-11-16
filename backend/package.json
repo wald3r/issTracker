@@ -1,0 +1,18 @@
+{
+  "name": "iss",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Walder",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6",
+    "sqlite3": "^5.0.0",
+    "telegraf": "^3.38.0"
+  }
+}

@@ -1,0 +1,88 @@
+
+const express = require('express')
+const Telegraf = require('telegraf')
+const database = require('./utils/database')
+const app = express()
+const bot = new Telegraf('1430749195:AAFPvIqlQ_nX7n3lhvmX-D3POSziQyA5DJM') 
+
+
+database.checkDatabase()
+
+bot.hears('hi', (ctx) => ctx.reply('Hey there')) 
+bot.hears('hello', ctx => ctx.reply(`Hey ${ctx.from.username}!`))
+
+
+bot.command('register', async(ctx) => {
+    await database.insertRow('registered', '(null, ?, ?)', [ctx.chat.id, ctx.from.id])
+    ctx.reply('Hey, you are now registered to my ISS tracking service. Kind regards Steven. ')
+})
+
+bot.command('deregister', async(ctx) => {
+    id = ctx.from.id
+    await database.deleteRowsByValue('registered', id, 'userId')
+    ctx.reply('Hey, it is me Steven. You just deregestired from my ISS tracking service. Too bad. ')
+})
+
+bot.hears('where', async(ctx) => {
+    const locationLine = await database.selectAllRows('rowid, latitude, longitude', 'location')
+    ctx.reply(`Hey pow, the ISS is currently located near lat/long: ${locationLine[0].latitude}/${locationLine[0].longitude}`)
+})
+
+bot.launch() // start
+
+app.use(express.json())
+
+app.get('/api/iss/notification', async (request, response) => {
+
+    const ruser = await database.selectAllRows('rowid, chatId, userId', 'registered')
+    ruser.map(user => {
+        bot.telegram.sendMessage(user.userId, `Hey mate, amazing news. The ISS is in your area. Check out this link: https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/International_Space_Station/Where_is_the_International_Space_Station `)
+        bot.telegram.sendMessage(user.userId, 'Cheers, Steven!')
+    })
+    response.status(200)
+})
+
+
+app.get('/api/iss/coordinates', async (request, response) => {
+
+    const coordinates = await database.selectAllRows('aLat,aLong, bLat, bLong', 'coordinates')
+    if(coordinates.length !== 0){
+        response.status(200).json(coordinates[0])
+    }else{
+        response.status(500)
+    }
+
+})
+
+
+app.post('/api/iss/coordinates', async (request, response) => {
+
+    const data = request.body
+    const coordinates = await database.selectAllRows('aLat,aLong, bLat, bLong', 'coordinates')
+    if(coordinates.length !== 0){
+        await database.updateById('coordinates', 'aLat = ?, aLong = ?, bLat = ?, bLong = ?', [data.coordinateA.latitude, data.coordinateA.longitude, data.coordinateB.latitude, data.coordinateB.longitude, 1])
+    }else{
+        await database.insertRow('coordinates', '(null, ?, ?, ?, ?)', [data.coordinateA.latitude, data.coordinateA.longitude, data.coordinateB.latitude, data.coordinateB.longitude])
+    }
+    response.status(200)
+})
+
+
+app.post('/api/iss', async (request, response) => {
+    const data = request.body
+    
+    if(data !== undefined){
+        const locationLine = await database.selectAllRows('rowid, latitude, longitude', 'location')
+        if(locationLine.length === 0){
+            await database.insertRow('location', '(null, ?, ?)', [data.latitude, data.longitude])
+        }else{
+            await database.updateById('location', 'latitude = ?, longitude = ?', [data.latitude, data.longitude, 1])
+        }
+    }
+    return response.status(200)
+})
+
+app.listen(3001, () => {
+    console.log('Start listening on port 3001')
+})
+    
