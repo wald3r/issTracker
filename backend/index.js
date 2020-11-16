@@ -88,7 +88,7 @@ app.post('/api/iss', async (request, response) => {
     response.status(200).send('All okay')
 })
 
-app.listen(3001, () => {
-    console.log('Start listening on port 3001')
+app.listen(3002, () => {
+    console.log('Start listening on port 3002')
 })
     
