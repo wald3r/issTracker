@@ -71,7 +71,7 @@ const App = () => {
  
     console.log('get iss data')
     const tmp = await issService.getLocation()
-    //await backendService.sendLocation({latitude: tmp.iss_position.latitude, longitude: tmp.iss_position.longitude})
+    await backendService.sendLocation({latitude: tmp.iss_position.latitude, longitude: tmp.iss_position.longitude})
     setIssData(tmp)
     getISSData()
     

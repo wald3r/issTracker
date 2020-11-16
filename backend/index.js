@@ -16,6 +16,10 @@ bot.command('start', async(ctx) => {
     ctx.reply(`Hey ${ctx.from.username}, I am Steven. Nice to meet you.`)
 })
 
+bot.command('location', (ctx) => {
+    ctx.reply(ctx.location.latitude, ctx.location.longitude)
+})
+
 bot.command('register', async(ctx) => {
     await database.insertRow('registered', '(null, ?, ?)', [ctx.chat.id, ctx.from.id])
     ctx.reply('Hey, you just registered to my ISS tracking service. Kind regards, Steven. ')
