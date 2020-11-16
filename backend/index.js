@@ -18,13 +18,13 @@ bot.command('start', async(ctx) => {
 
 bot.command('register', async(ctx) => {
     await database.insertRow('registered', '(null, ?, ?)', [ctx.chat.id, ctx.from.id])
-    ctx.reply('Hey, you are now registered to my ISS tracking service. Kind regards, Steven. ')
+    ctx.reply('Hey, you just registered to my ISS tracking service. Kind regards, Steven. ')
 })
 
 bot.command('deregister', async(ctx) => {
     id = ctx.from.id
     await database.deleteRowsByValue('registered', id, 'userId')
-    ctx.reply('Hey, it is me Steven. You just deregestired from my ISS tracking service. Too bad. ')
+    ctx.reply('Hey, it is me Steven. You just deregistered from my ISS tracking service. Too bad. ')
 })
 
 bot.hears('where', async(ctx) => {
@@ -35,7 +35,7 @@ bot.hears('where', async(ctx) => {
 bot.launch() // start
 
 app.use(express.json())
-
+app.use(express.static('build'))
 app.get('/api/iss/notification', async (request, response) => {
 
     const ruser = await database.selectAllRows('rowid, chatId, userId', 'registered')
@@ -73,7 +73,6 @@ app.post('/api/iss/coordinates', async (request, response) => {
 
 app.post('/api/iss', async (request, response) => {
     const data = request.body
-    
     if(data !== undefined){
         const locationLine = await database.selectAllRows('rowid, latitude, longitude', 'location')
         if(locationLine.length === 0){
@@ -82,7 +81,7 @@ app.post('/api/iss', async (request, response) => {
             await database.updateById('location', 'latitude = ?, longitude = ?', [data.latitude, data.longitude, 1])
         }
     }
-    return response.status(200)
+    response.status(200).send('All okay')
 })
 
 app.listen(3001, () => {

@@ -7,12 +7,12 @@ const App = () => {
 
   const [issData, setIssData] = useState(null)
   const [geoData, setGeoData] = useState(null)
-  const [around, setAround] = useState(false)
   const [coordinateA, setCoordinateA] = useState({latitude: 50, longitude: 50})
   const [coordinateB, setCoordinateB] = useState({latitude: 50, longitude: 50})
-
+  
+  
   useEffect(() => {
-    updateISSData()
+    handleISSData()
     getCoordinates()
   }, []);
 
@@ -34,22 +34,14 @@ const App = () => {
     let lat = issData.iss_position.latitude
     let long = issData.iss_position.longitude
 
-
     if(Number(lat) < coordinateB.latitude) return 'No' 
     else if (Number(lat) > Number(coordinateA.latitude)) return 'No'
     else if (Number(long) < Number(coordinateA.longitude)) return 'No'
     else if (Number(long) > Number(coordinateB.longitude)) return 'No'
     else {
-      if(around !== true){
-        console.log('sending...')
-        
-        setAround(true)
-        setTimeout(() => setAround(false), 1000 * 60 * 15)
-        sendNotification()
-        backendService.importNotification()
-
-      }
-
+      console.log('sending...')        
+      sendNotification()
+      backendService.importNotification()
       return 'Yes'
     }
   }
@@ -74,13 +66,18 @@ const App = () => {
       
   }
 
-  const updateISSData = async () => {
+
+  const handleISSData = async () => {
+ 
     console.log('get iss data')
     const tmp = await issService.getLocation()
-    backendService.sendLocation({latitude: tmp.iss_position.latitude, longitude: tmp.iss_position.longitude})
+    //await backendService.sendLocation({latitude: tmp.iss_position.latitude, longitude: tmp.iss_position.longitude})
     setIssData(tmp)
     getISSData()
+    
+
   }
+
 
   const getGeoData = async () => {
     console.log('get location data')
@@ -111,20 +108,22 @@ const App = () => {
       </div>
     )
   } else {
-    return (
+  
 
+    return (
       <div style={{ textAlign: 'center' }}>
         <h1>ISS Location Tracker</h1>
         <div style={style}>
           <div>
             <h2>Current Location:</h2>
-            <button onClick={() => updateISSData()}>Update Location</button><br />
+    
+            <button onClick={() => handleISSData()}>Update Location</button><br />
             Latitude: {issData.iss_position.latitude}<br />
             Longitude: {issData.iss_position.longitude}<br />
           </div>
           <div>        
             <h2>GeoLocation:</h2>
-            <button onClick={() => getGeoData()}>Determine GeoLocation</button><br />
+            <div><button onClick={() => getGeoData()}>Determine GeoLocation</button></div><br />
             {handleGeoLocation()}<br/>
           </div>
           <div>

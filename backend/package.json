@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui": "rm -rf build && cd /home/ubuntu/iss/frontend && npm run build --prod && cp -r build /home/ubuntu/iss/backend"
   },
   "author": "Daniel Walder",
   "license": "ISC",
