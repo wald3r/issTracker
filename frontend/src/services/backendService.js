@@ -1,15 +1,10 @@
 import axios from 'axios'
 
-const sendLocation = async (obj) => {
+const getLocation = async () => {
 
-  const response = await axios.post('/api/iss', obj)
+  const response = await axios.get('/api/iss')
   return response
 
-}
-
-const importNotification = async () => {
-  const response = await axios.get('/api/iss/notification')
-  return response
 }
 
 const setCoordinates = async (obj) => {
@@ -22,4 +17,4 @@ const getCoordinates = async (obj) => {
   return response.data
 }
 
-export default { sendLocation, importNotification, getCoordinates, setCoordinates }
+export default { getLocation, getCoordinates, setCoordinates }

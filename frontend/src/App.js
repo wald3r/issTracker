@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import issService from './services/issService'
 import geolocationService from './services/geolocationService'
 import backendService from './services/backendService'
 
@@ -14,6 +13,7 @@ const App = () => {
   useEffect(() => {
     handleISSData()
     getCoordinates()
+    updateData()
   }, []);
 
 
@@ -23,6 +23,10 @@ const App = () => {
   }
 
 
+  const updateData = async () => {
+    setInterval(() => { window.location.reload() }, 1000*60*10) 
+}
+
   const getCoordinates = async () => {
     const data = await backendService.getCoordinates()
 
@@ -31,22 +35,19 @@ const App = () => {
   }
 
   const isAround = () => {
-    let lat = issData.iss_position.latitude
-    let long = issData.iss_position.longitude
+    let lat = issData.latitude
+    let long = issData.longitude
 
     if(Number(lat) < coordinateB.latitude) return 'No' 
     else if (Number(lat) > Number(coordinateA.latitude)) return 'No'
     else if (Number(long) < Number(coordinateA.longitude)) return 'No'
     else if (Number(long) > Number(coordinateB.longitude)) return 'No'
     else {
-      console.log('sending...')        
-      sendNotification()
-      backendService.importNotification()
       return 'Yes'
     }
   }
 
-  const sendNotification = async () => {
+  /*const sendNotification = async () => {
     const templateId = 'template_vK0F4z4Q'
     const serviceId = 'iss_tracker'
     const params = {
@@ -58,30 +59,22 @@ const App = () => {
     }catch(err){
       console.log(err)
     }
-  }
-
-
-  const getISSData = async () => {
-      setInterval(() => { window.location.reload() }, 1000*60)
-      
-  }
+  }*/
 
 
   const handleISSData = async () => {
  
     console.log('get iss data')
-    const tmp = await issService.getLocation()
-    await backendService.sendLocation({latitude: tmp.iss_position.latitude, longitude: tmp.iss_position.longitude})
-    setIssData(tmp)
-    getISSData()
-    
+
+    const response = await backendService.getLocation()
+    setIssData({ longitude: response.data.longitude, latitude: response.data.latitude })
 
   }
 
 
   const getGeoData = async () => {
     console.log('get location data')
-    setGeoData(await geolocationService.getLocation(issData.iss_position.longitude, issData.iss_position.latitude))
+    setGeoData(await geolocationService.getLocation(issData.longitude, issData.latitude))
   }
 
   const handleGeoLocation = () => {
@@ -118,8 +111,8 @@ const App = () => {
             <h2>Current Location:</h2>
     
             <button onClick={() => handleISSData()}>Update Location</button><br />
-            Latitude: {issData.iss_position.latitude}<br />
-            Longitude: {issData.iss_position.longitude}<br />
+            Latitude: {issData.latitude}<br />
+            Longitude: {issData.longitude}<br />
           </div>
           <div>        
             <h2>GeoLocation:</h2>

@@ -68,7 +68,7 @@ bot.hears('where', async(ctx) => {
     if(locationLine.length !== 0){
         ctx.reply(`Hey pow, the ISS is currently located near lat/long: ${locationLine[0].latitude}/${locationLine[0].longitude}`)
     }else{
-        ctx.reply(`Hey pow, I have no idea where the ISS is. Maybe it disappeared in a black hole.`)
+        ctx.reply(`Hey pow, I have no idea where the ISS is. Maybe it disappeared into a black hole.`)
     }
 })
 
