@@ -47,7 +47,7 @@ bot.hears('area', async (ctx) => {
 bot.command('register', async(ctx) => {
     const registrationRows = await database.selectAllRows('rowid, chatId, userId', 'registered')
     const line = registrationRows.filter(user => user.userId === ctx.from.id)
-    if(line === null){
+    if(line.length === 0){
         await database.insertRow('registered', '(null, ?, ?)', [ctx.chat.id, ctx.from.id])
         ctx.reply('Hey, you just registered to my ISS tracking service. Kind regards, Steven. ')
     }else{
@@ -59,7 +59,7 @@ bot.command('deregister', async(ctx) => {
     id = ctx.from.id
     const registrationRows = await database.selectAllRows('rowid, chatId, userId', 'registered')
     const line = registrationRows.filter(user => user.userId === id)
-    if(line !== null){
+    if(line.length !== 0){
         await database.deleteRowsByValue('registered', id, 'userId')
         ctx.reply('Hey, it is me Steven. You just deregistered from my ISS tracking service. Too bad. ')
     }else{
