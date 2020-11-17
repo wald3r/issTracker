@@ -18,7 +18,28 @@ bot.command('start', async(ctx) => {
 
 bot.on('location', ({from, message, reply}) => {
     console.log(from.id, message.location)
-    reply(`Hey ${from.username}, your current location is lat/long: ${message.latitude}/${message.longitude}. Sadly, you can't update the area by now. Cheers, Steven.`)
+    const lat = message.location.latitude
+    const long = message.location.longitude
+
+    const coordinates = await database.selectAllRows('aLat,aLong, bLat, bLong', 'coordinates')
+    if(coordinates.length !== 0){
+        await database.updateById('coordinates', 'aLat = ?, aLong = ?, bLat = ?, bLong = ?', [lat + 0.1, long - 0.1, lat - 0.1, long + 0.1, 1])
+    }else{
+        await database.insertRow('coordinates', '(null, ?, ?, ?, ?)', [lat + 0.1, long - 0.1, lat - 0.1, long + 0.1])
+    }
+    reply(`Hey ${from.username}, your new scanning area is lat/long: ${message.location.latitude}/${message.location.longitude}. Cheers, Steven.`)
+})
+
+bot.hears('area', (ctx) => {
+    const id = ctx.from.id
+    const coordinates = await database.selectAllRows('aLat,aLong, bLat, bLong', 'coordinates')
+    if(coordinates.length !== 0){
+        ctx.reply('Hey mate, there is currently no area set to scan. Do you want to set some? Just send your location to me.')
+    }else{
+        const lat = coordinates.aLat - 0.1
+        const long = coordinateA.aLong + 0.1
+        bot.telegram.sendLocation(id, lat, long)
+    }
 })
 
 bot.command('register', async(ctx) => {
