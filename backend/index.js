@@ -16,8 +16,9 @@ bot.command('start', async(ctx) => {
     ctx.reply(`Hey ${ctx.from.username}, I am Steven. Nice to meet you.`)
 })
 
-bot.command('location', (ctx) => {
-    ctx.reply(ctx.location.latitude, ctx.location.longitude)
+bot.on('location', ({from, message, reply}) => {
+    console.log(from.id, message.location)
+    reply(`Hey ${from.username}, your current location is lat/long: ${message.latitude}/${message.longitude}. Sadly, you can't update the area by now. Cheers, Steven.`)
 })
 
 bot.command('register', async(ctx) => {
