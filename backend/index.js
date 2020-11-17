@@ -16,7 +16,7 @@ bot.command('start', async(ctx) => {
     ctx.reply(`Hey ${ctx.from.username}, I am Steven. Nice to meet you.`)
 })
 
-bot.on('location', ({from, message, reply}) => {
+bot.on('location', async ({from, message, reply}) => {
     console.log(from.id, message.location)
     const lat = message.location.latitude
     const long = message.location.longitude
@@ -30,7 +30,7 @@ bot.on('location', ({from, message, reply}) => {
     reply(`Hey ${from.username}, your new scanning area is lat/long: ${message.location.latitude}/${message.location.longitude}. Cheers, Steven.`)
 })
 
-bot.hears('area', (ctx) => {
+bot.hears('area', async (ctx) => {
     const id = ctx.from.id
     const coordinates = await database.selectAllRows('aLat,aLong, bLat, bLong', 'coordinates')
     if(coordinates.length !== 0){
