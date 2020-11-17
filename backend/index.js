@@ -3,7 +3,9 @@ const express = require('express')
 const Telegraf = require('telegraf')
 const database = require('./utils/database')
 const app = express()
-require('dotenv').config()
+const bodyparser = require('body-parser')
+const cors = require('cors')
+equire('dotenv').config()
 
 const bot = new Telegraf(process.env.TOKEN) 
 
@@ -64,7 +66,8 @@ bot.hears('where', async(ctx) => {
 
 bot.launch() // start
 
-app.use(express.json())
+app.use(bodyparser.json())
+app.use(cors())
 app.use(express.static('build'))
 app.get('/api/iss/notification', async (request, response) => {
 
@@ -103,6 +106,7 @@ app.post('/api/iss/coordinates', async (request, response) => {
 
 app.post('/api/iss', async (request, response) => {
     const data = request.body
+    console.log(data)
     if(data !== undefined){
         const locationLine = await database.selectAllRows('rowid, latitude, longitude', 'location')
         if(locationLine.length === 0){
