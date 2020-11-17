@@ -36,8 +36,8 @@ bot.hears('area', async (ctx) => {
     if(coordinates.length !== 0){
         ctx.reply('Hey mate, there is currently no area set to scan. Do you want to set some? Just send your location to me.')
     }else{
-        const lat = coordinates.aLat - 0.1
-        const long = coordinateA.aLong + 0.1
+        const lat = coordinates[0].aLat - 0.1
+        const long = coordinates[0].aLong + 0.1
         bot.telegram.sendLocation(id, lat, long)
     }
 })
@@ -55,7 +55,11 @@ bot.command('deregister', async(ctx) => {
 
 bot.hears('where', async(ctx) => {
     const locationLine = await database.selectAllRows('rowid, latitude, longitude', 'location')
-    ctx.reply(`Hey pow, the ISS is currently located near lat/long: ${locationLine[0].latitude}/${locationLine[0].longitude}`)
+    if(locationLine.length !== 0){
+        ctx.reply(`Hey pow, the ISS is currently located near lat/long: ${locationLine[0].latitude}/${locationLine[0].longitude}`)
+    }else{
+        ctx.reply(`Hey pow, I have no idea where the ISS is. Maybe it disappeared in a black hole.`)
+    }
 })
 
 bot.launch() // start
