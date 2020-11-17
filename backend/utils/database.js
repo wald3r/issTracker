@@ -18,7 +18,6 @@ const coordinatesData = `
     aLong FLOAT,
     bLat FLOAT,
     bLong FLOAT
-
 `
 
 
