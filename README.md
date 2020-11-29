@@ -2,4 +2,4 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 # issTracker
 
-A little tracker to tell me when the ISS is around. 
+A little tracker to tell me via a telegram bot when the ISS is around.
