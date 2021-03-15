@@ -2,7 +2,7 @@
 const Telegraf = require('telegraf')
 require('dotenv').config()
 const database = require('./utils/database')
-
+const botCommunication  = require('./botCommunication')
 const bot = new Telegraf(process.env.TOKEN) 
 
 
@@ -20,16 +20,16 @@ bot.on('location', async ({from, message, reply}) => {
 
     const coordinates = await database.selectAllRows('aLat,aLong, bLat, bLong', 'coordinates')
     if(coordinates.length !== 0){
-        await database.updateById('coordinates', 'aLat = ?, aLong = ?, bLat = ?, bLong = ?', [lat + 0.1, long - 0.1, lat - 0.1, long + 0.1, 1])
+        await database.updateById('coordinates', 'aLat = ?, aLong = ?, bLat = ?, bLong = ?, userId = ?', [lat + 0.1, long - 0.1, lat - 0.1, long + 0.1, from.id, 1])
     }else{
-        await database.insertRow('coordinates', '(null, ?, ?, ?, ?)', [lat + 0.1, long - 0.1, lat - 0.1, long + 0.1])
+        await database.insertRow('coordinates', '(null, ?, ?, ?, ?, ?)', [lat + 0.1, long - 0.1, lat - 0.1, long + 0.1, from.id])
     }
     reply(`Hey ${from.username}, your new scanning area is lat/long: ${message.location.latitude}/${message.location.longitude}. Cheers, Steven.`)
 })
 
 bot.hears('area', async (ctx) => {
     const id = ctx.from.id
-    const coordinates = await database.selectAllRows('aLat, aLong, bLat, bLong', 'coordinates')
+    const coordinates = await database.selectAllRows('aLat, aLong, bLat, bLong, userId', 'coordinates')
     if(coordinates.length === 0){
         ctx.reply('Hey mate, there is currently no area set to scan. Do you want to set some? Just send your location to me.')
     }else{
@@ -44,7 +44,9 @@ bot.command('register', async(ctx) => {
     const line = registrationRows.filter(user => user.userId === ctx.from.id)
     if(line.length === 0){
         await database.insertRow('registered', '(null, ?, ?)', [ctx.chat.id, ctx.from.id])
-        ctx.reply('Hey, you just registered to my ISS tracking service. Kind regards, Steven. ')
+        ctx.reply('Hey, you just registered to my astronomy picture of the day service. Kind regards, Steven.')
+        await botCommunication.sendLatestAstronomyData(ctx.from.id)
+
     }else{
         ctx.reply('Hey mate, it appears you have already registered to my awesome service. Keep enjoying it, Steven.')
     } 
@@ -56,7 +58,7 @@ bot.command('deregister', async(ctx) => {
     const line = registrationRows.filter(user => user.userId === id)
     if(line.length !== 0){
         await database.deleteRowsByValue('registered', id, 'userId')
-        ctx.reply('Hey, it is me Steven. You just deregistered from my ISS tracking service. Too bad. ')
+        ctx.reply('Hey, it is me Steven. You just deregistered from my astronomy picture of the day service. Too bad. ')
     }else{
         ctx.reply('Hey, it is me Steven. You are not even registered. Stop trying to deregister.')
     }

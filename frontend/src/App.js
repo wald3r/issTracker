@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import geolocationService from './services/geolocationService'
 import backendService from './services/backendService'
+import { Button } from 'react-bootstrap'
 
 const App = () => {
 
@@ -110,13 +111,13 @@ const App = () => {
           <div>
             <h2>Current Location:</h2>
     
-            <button onClick={() => handleISSData()}>Update Location</button><br />
+            <Button variant="primary" onClick={() => handleISSData()}>Update Location</Button><br />
             Latitude: {issData.latitude}<br />
             Longitude: {issData.longitude}<br />
           </div>
           <div>        
             <h2>GeoLocation:</h2>
-            <div><button onClick={() => getGeoData()}>Determine GeoLocation</button></div><br />
+            <div><Button variant="primary" onClick={() => getGeoData()}>Determine GeoLocation</Button></div><br />
             {handleGeoLocation()}<br/>
           </div>
           <div>

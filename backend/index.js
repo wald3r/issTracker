@@ -9,26 +9,26 @@ const scheduler = require('./scheduler')
 
 database.checkDatabase()
 
-
 scheduler.locationScheduler
+scheduler.astronomyScheduler
 app.use(bodyparser.json())
 app.use(cors())
 app.use(express.static('build'))
 
 
-app.get('/api/iss/coordinates', async (request, response) => {
+/*app.get('/api/iss/coordinates', async (request, response) => {
 
-    const coordinates = await database.selectAllRows('aLat, aLong, bLat, bLong', 'coordinates')
+    const coordinates = await database.selectAllRows('aLat, aLong, bLat, bLong, userId', 'coordinates')
     if(coordinates.length !== 0){
         response.status(200).json(coordinates[0])
     }else{
         response.status(500)
     }
 
-})
+})*/
 
 
-app.post('/api/iss/coordinates', async (request, response) => {
+/*app.post('/api/iss/coordinates', async (request, response) => {
 
     const data = request.body
     const coordinates = await database.selectAllRows('aLat,aLong, bLat, bLong', 'coordinates')
@@ -38,7 +38,7 @@ app.post('/api/iss/coordinates', async (request, response) => {
         await database.insertRow('coordinates', '(null, ?, ?, ?, ?)', [data.coordinateA.latitude, data.coordinateA.longitude, data.coordinateB.latitude, data.coordinateB.longitude])
     }
     response.status(200)
-})
+})*/
 
 
 app.get('/api/iss', async (request, response) => {

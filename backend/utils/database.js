@@ -17,7 +17,18 @@ const coordinatesData = `
     aLat FLOAT,
     aLong FLOAT,
     bLat FLOAT,
-    bLong FLOAT
+    bLong FLOAT,
+    userId INTEGER
+`
+
+const astronomyData = `
+  rowid INTEGER PRIMARY KEY AUTOINCREMENT,
+  copyright STRING,
+  date STRING,
+  explanation STRING,
+  media_type STRING,
+  title STRING,
+  url STRING
 `
 
 
@@ -33,6 +44,7 @@ const checkDatabase = async () => {
     createTable(db, 'location', locationData)
     createTable(db, 'registered', registeredData)
     createTable(db, 'coordinates', coordinatesData)
+    createTable(db, 'astronomy', astronomyData)
     
     await closeDatabase(db)
 }
@@ -156,6 +168,29 @@ const deleteRowsByValue = async (tableName, param, value) => {
   await closeDatabase(db)
   return code
 }
+
+const selectByValue = async(tableValues, tableName, value, param) => {
+  let db = await openDatabase()
+  let responseArray = []
+
+  responseArray = await new Promise((resolve) => {
+    db.serialize(async () => {
+      db.all(`SELECT ${tableValues} FROM ${tableName} WHERE ${value} = '${param}'`, (err, rows) => {
+        if(rows === undefined){
+          resolve(responseArray)
+        }else{
+          rows.map(row =>{
+            responseArray = responseArray.concat(row)
+          })
+          resolve(responseArray)
+        }
+      })
+    })
+  })
+
+  await closeDatabase(db)
+  return responseArray
+}
   
 
 const closeDatabase = async (db) => {
@@ -170,4 +205,4 @@ const closeDatabase = async (db) => {
 }
 
 
-module.exports = { checkDatabase, insertRow, selectAllRows, deleteRowById, updateById, deleteRowsByValue }
+module.exports = { checkDatabase, insertRow, selectAllRows, deleteRowById, updateById, deleteRowsByValue, selectByValue}
