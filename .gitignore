@@ -2,4 +2,5 @@
 /frontend/node_modules/*
 
 /backend/.env
-
+/backend/token
+space.pem
