@@ -9,7 +9,7 @@ const scheduler = require('./scheduler')
 
 database.checkDatabase()
 
-scheduler.locationScheduler
+//scheduler.locationScheduler
 scheduler.astronomyScheduler
 app.use(bodyparser.json())
 app.use(cors())

@@ -32,4 +32,4 @@ const astronomyScheduler = schedule.scheduleJob('40 10 * * *', async () => {
 })
 
 
-module.exports = { locationScheduler, astronomyScheduler }
+module.exports = { astronomyScheduler }
